@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include <Windows.h>
+#include <boost/coroutine/coroutine.hpp>
 
 LPVOID g_lpMainFiber;
 LPVOID g_lpSubFiber;
