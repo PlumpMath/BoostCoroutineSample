@@ -7,27 +7,40 @@
 #include <vector>
 #include <boost/coroutine/coroutine.hpp>
 using namespace boost::coroutines;
-/*
+
 class Coroutine{
 private:
-	static void s_loop(coroutine<int()>::caller_type& yield){
+	static void s_loop(coroutine<int()>::caller_type& yield, Coroutine* coroutine){
+		coroutine->m_yield = &yield;
+
+		// この時点ではまだ Coroutine インスタンスが初期化されきってないので、runは呼べない。なので、一度 yield で抜ける.
+		yield(0);
 		
+		// 次回の doContinue呼び出し時にここに到達する.
+		coroutine->run();
 	}
 public:
 	Coroutine();
-	virtual void run() = 0;
-	void doContinue(){
+	virtual ~Coroutine(){}
+	bool doContinue(){
 		if (m_coroutine){
 			m_coroutine();
+			return true;
+		}
+		else{
+			return false;
 		}
 	}
 protected:
-	void wait(){
-		return;
+	virtual void run() = 0;
+	void yield(){
+		(*m_yield)(0);
 	}
 private:
 	coroutine<int()> m_coroutine;
+	coroutine<int()>::caller_type* m_yield;
 };
+
 
 class CoroutineManager{
 public:
@@ -39,61 +52,55 @@ public:
 	void add(Coroutine* coroutine){
 		m_coroutines.push_back(coroutine);
 	}
-	void go(){
-		for (Coroutine* coroutine : m_coroutines){
-			coroutine->doContinue();
+	bool go(){
+		bool any_did = false;
+		for (auto it = m_coroutines.begin(); it != m_coroutines.end();){
+			Coroutine* coroutine = *it;
+			bool did = coroutine->doContinue();
+			any_did |= did;
+			if (!did){
+				delete coroutine;
+				m_coroutines.erase(it++);
+			}
+			else{
+				it++;
+			}
 		}
+		return any_did;
 	}
 private:
 	std::list<Coroutine*> m_coroutines;
 };
 
 Coroutine::Coroutine()
-: m_coroutine(s_loop)
+	: m_coroutine(std::bind(s_loop, std::placeholders::_1, this))
 {
 	CoroutineManager::instance()->add(this);
 }
-*/
-void loop(coroutine<int()>::caller_type& yield, int param)
-{
-	printf("param = %d\n", param);
-	for (int i = 0; i < 10; ++i) {
-		yield(i);
+
+class MyCoroutine : public Coroutine{
+protected:
+	~MyCoroutine(){
+		printf("remove hello\n");
 	}
-}
-
-void loop2(coroutine<int()>::caller_type& yield)
-{
-	for (int i = 0; i < 10; ++i) {
-		yield(i * 100);
-	}
-}
-
-template<typename P>
-void enumerate(P predicate)
-{
-	using std::placeholders::_1;
-	coroutine<int()> routine( std::bind(loop, _1, 2000) );
-	coroutine<int()> routine2(loop2);
-
-	while (routine || routine2) {
-		if (routine){
-			int i = routine.get();
-			predicate(i);
-			routine();
-		}
-		if (routine2){
-			int i = routine2.get();
-			predicate(i);
-			routine2();
+	void run(){
+		for (int i = 0; i < 3; i++){
+			yield();
+			printf("hello %d\n", i);
 		}
 	}
-}
+};
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	enumerate([](int i){ std::cout << i << " "; });
-	std::cout << std::endl;
-
+	printf("main1\n");
+	new MyCoroutine();
+	new MyCoroutine();
+	printf("main2\n");
+	while(CoroutineManager::instance()->go()){
+		printf("main sleep\n");
+	}
+	printf("main3\n");
 	return 0;
 }
