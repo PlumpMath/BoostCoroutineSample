@@ -17,12 +17,18 @@
     <ClInclude Include="src\targetver.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\InstantCoroutine.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FiberSample.cpp">
+    <ClCompile Include="src\InstantCoroutine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
