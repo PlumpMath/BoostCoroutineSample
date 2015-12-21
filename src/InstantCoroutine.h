@@ -22,6 +22,16 @@ private:
 	boost::coroutines::coroutine<int()>::caller_type* m_yield;
 };
 
+class TinyCoroutine : public Coroutine{
+private:
+	std::function<void(Coroutine*)> m_func;
+public:
+	TinyCoroutine(std::function<void(Coroutine*)> func) : m_func(func) {}
+	void run(){
+		m_func(this);
+	}
+};
+
 
 class CoroutineManager{
 public:

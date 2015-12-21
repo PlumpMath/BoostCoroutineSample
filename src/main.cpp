@@ -20,16 +20,6 @@ protected:
 	}
 };
 
-class MyTinyCoroutine : public Coroutine{
-private:
-	std::function<void(Coroutine*)> m_func;
-public:
-	MyTinyCoroutine(std::function<void(Coroutine*)> func) : m_func(func) {}
-	void run(){
-		m_func(this);
-	}
-};
-
 int _tmain(int argc, _TCHAR* argv[])
 {
 	printf("main1\n");
@@ -37,7 +27,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	new MyCoroutine();
 	int n = 0;
 	printf("n = %d\n", n);
-	new MyTinyCoroutine([&n](Coroutine* coroutine){
+	new TinyCoroutine([&n](Coroutine* coroutine){
 		n++;
 		coroutine->yield();
 		n++;
