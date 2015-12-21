@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{55F92E67-C5F9-49FA-BCCE-F916C2469E79}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>FiberSample</RootNamespace>
+    <RootNamespace>InstantCoroutineSample</RootNamespace>
     <ProjectName>InstantCoroutineSample</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
