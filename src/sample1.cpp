@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include <boost/coroutine/coroutine.hpp>
-using namespace boost::coroutines;
 
-void loop(coroutine<int()>::caller_type& yield)
+void loop(boost::coroutines::coroutine<int()>::caller_type& yield)
 {
 	printf("loop start.\n");
 	for (int i = 0; i < 5; ++i) {
@@ -14,10 +13,10 @@ void loop(coroutine<int()>::caller_type& yield)
 void sample1()
 {
 	printf("sample1 start.\n");
-	coroutine<int()> routine(loop);
+	boost::coroutines::coroutine<int()> routine(loop);
 	while (routine) {
-		int i = routine.get();
-		printf("i = %d\n", i);
+		int n = routine.get();
+		printf("n = %d\n", n);
 		routine();
 	}
 	printf("sample1 end.\n");
