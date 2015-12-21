@@ -1,41 +1,36 @@
 #include "stdafx.h"
-#include <list>
-#include <vector>
 #include "InstantCoroutine.h"
+#include <string>
 
 class MyCoroutine : public Coroutine{
-protected:
+public:
+	MyCoroutine(std::string name, int cnt){
+		m_name = name;
+		m_cnt = cnt;
+		printf("%s start.\n", m_name.c_str());
+	}
 	~MyCoroutine(){
-		printf("remove hello\n");
+		printf("%s end.\n", m_name.c_str());
 	}
 	void run(){
-		for (int i = 0; i < 3; i++){
+		for (int i = 0; i < m_cnt; i++){
 			yield();
-			printf("hello %d\n", i);
+			printf("%s %d\n", m_name.c_str(), i);
 		}
 	}
+private:
+	std::string m_name;
+	int m_cnt;
 };
 
 void sample2()
 {
-	printf("main1\n");
-	new MyCoroutine();
-	new MyCoroutine();
-	int n = 0;
-	printf("n = %d\n", n);
-	new TinyCoroutine([&n](Coroutine* coroutine){
-		n++;
-		coroutine->yield();
-		n++;
-		printf("n1 = %d\n", n);
-		coroutine->yield();
-		n++;
-		printf("n2 = %d\n", n);
-	});
-	printf("main2\n");
+	new MyCoroutine("hello", 4);
+	new MyCoroutine("world", 2);
+	
+	printf("manager start.\n");
 	while (CoroutineManager::instance()->go()){
-		printf("main sleep\n");
+		printf("manager sleep\n");
 	}
-	printf("main3\n");
-	printf("nn = %d\n", n);
+	printf("manager end.\n");
 }

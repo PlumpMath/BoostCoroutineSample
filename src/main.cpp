@@ -11,5 +11,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	void sample2();
 	sample2();
 	printf("\n\n");
+
+	printf("---- sample3 ----\n");
+	void sample3();
+	sample3();
+	printf("\n\n");
+
 	return 0;
 }
